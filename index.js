@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { query } = require("express");
 require("dotenv").config();
 const ObjectId = require("mongodb").ObjectId;
 
@@ -23,12 +24,22 @@ async function run(){
         .collection("parking");
 
 
-        app.get("/service", async (req, res) => {
+     app.get("/service", async (req, res) => {
             const query = {};
             const cursor = parkingCollection.find(query)
             const service = await cursor.toArray();
             res.send(service);
           });
+// exist in parking 
+app.get('/available', async(req,res)=>{
+ const checkout=req.query.checkout
+ const availableCollection = await parkingCollection.find().toArray()
+ const query={checkout:checkout}
+ const available=await parkingCollection.find(query).toArray()
+ res.send(available)
+})
+
+
     //   post parking 
     app.post("/parking", async (req, res) => {
         const parking = req.body;
@@ -39,7 +50,7 @@ async function run(){
  app.put('/parking/:id', async(req,res)=>{
   const id = req.params.id
   const updateTime = req.body
-  console.log("updateTime", updateTime,id)
+  // console.log("updateTime", updateTime,id)
   const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updatedDoc = {
