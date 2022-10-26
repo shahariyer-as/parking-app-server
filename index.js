@@ -36,6 +36,23 @@ async function run(){
         res.send(result);
       });
 
+ app.put('/parking/:id', async(req,res)=>{
+  const id = req.params.id
+  const updateTime = req.body
+  console.log("updateTime", updateTime,id)
+  const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {checkout:updateTime.date},
+      };
+      const result = await parkingCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+ })
+
     }
     finally {
     }
